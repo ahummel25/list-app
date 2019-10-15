@@ -22,13 +22,10 @@ const CustomStatusBar: FC<StatusBarProps> = ({ backgroundColor, barStyle }) => (
   </View>
 );
 
-console.log(Platform);
-
 const STATUSBAR_HEIGHT = Platform.OS === "ios" ? 45 : StatusBar.currentHeight;
 
 const styles = StyleSheet.create({
   statusBar: {
-    backgroundColor: "#1c313a",
     height: STATUSBAR_HEIGHT
   }
 });

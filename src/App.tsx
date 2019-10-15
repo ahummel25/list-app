@@ -1,36 +1,47 @@
 import React, { FC } from "react";
-import { Platform, StatusBar, StyleSheet, Text, View } from "react-native";
+import { Linking, StyleSheet, Text, View } from "react-native";
 import { registerRootComponent } from "expo";
 
 import Login from "./pages/Login";
+import Logo from "./components/Logo";
 import CustomStatusBar from "./utils/StatusBar";
+import colors from "./styles/colors";
 
 const App: FC<{}> = () => (
   <View style={styles.container}>
-    <CustomStatusBar backgroundColor="#1c313a" barStyle="light-content" />
-    <View style={styles.content}>
-      <Login />
+    <CustomStatusBar
+      backgroundColor={colors.statusBar.backgroundColor}
+      barStyle="light-content"
+    />
+    <Logo />
+    <Login />
+    <View style={styles.signupTextContainer}>
+      <Text>
+        Don't have an account yet?{" "}
+        <Text
+          style={styles.signupText}
+          onPress={() => Linking.openURL("http://google.com")}
+        >
+          Sign Up
+        </Text>
+      </Text>
     </View>
   </View>
 );
 
-//const APPBAR_HEIGHT = Platform.OS === "ios" ? 24 : 56;
-
 const styles = StyleSheet.create({
   container: {
-    flex: 1
-    //backgroundColor: "#455a64",
-    // alignItems: "center",
-    // justifyContent: "center"
-  },
-  content: {
     flex: 1,
-    backgroundColor: "#33373B",
-    alignItems: "center",
-    justifyContent: "center"
+    backgroundColor: colors.login.containerBackgroundColor
   },
-  text: {
-    fontSize: 20
+  signupTextContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    flexGrow: 1,
+    bottom: 50
+  },
+  signupText: {
+    textDecorationLine: "underline"
   }
 });
 
