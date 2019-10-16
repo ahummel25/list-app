@@ -3,7 +3,7 @@ import { Image, StyleSheet, Text, View } from "react-native";
 
 import colors from "../styles/colors";
 
-const Logo: FC<{}> = () => (
+const Logo: FC<{}> = (): JSX.Element => (
   <View style={styles.container}>
     <Image
       style={styles.logo}
@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "flex-end"
   },
   logo: {
     height: 200,

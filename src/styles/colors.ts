@@ -1,8 +1,8 @@
 const colors = {
+  containerBackgroundColor: "#33373B",
   login: {
     buttonBackgroundColor: "#1c313a",
     buttonTextColor: "#ffffff",
-    containerBackgroundColor: "#33373B",
     textColor: "rgba(255, 255, 255, 0.7)",
     inputBox: {
       backgroundColor: "rgba(255, 255, 255, 0.3)",
