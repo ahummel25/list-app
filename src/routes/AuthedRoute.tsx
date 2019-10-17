@@ -6,7 +6,6 @@ import Login from "../pages/Login";
 
 const AuthedRoute = ({ component, key, isSignedIn, path }): JSX.Element => {
   //const isSignedIn = false;
-  console.log("Here");
 
   return (
     <>
