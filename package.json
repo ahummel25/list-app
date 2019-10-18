@@ -23,6 +23,7 @@
   "devDependencies": {
     "@types/react": "^16.8.23",
     "@types/react-native": "^0.57.65",
+    "@types/react-native-loading-spinner-overlay": "^0.5.1",
     "babel-preset-expo": "^7.0.0",
     "typescript": "^3.4.5"
   },

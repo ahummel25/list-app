@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useState } from "react";
 import {
   Linking,
   StyleSheet,
@@ -7,59 +7,102 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
+import { ErrorMessage, Formik, FormikActions, FormikProps } from "formik";
 import Spinner from "react-native-loading-spinner-overlay";
+import { validate as emailValidation } from "email-validator";
 
 import Logo from "../components/Logo";
 import colors from "../styles/colors";
 
+interface ILoginValues {
+  userName: string;
+  password: string;
+}
+
+const LoginError: FC<{}> = ({ children }): JSX.Element => (
+  <View>
+    <Text style={colors.error}>{children}</Text>
+  </View>
+);
+
+const handleSubmit = async (
+  values: ILoginValues,
+  { setFieldError }: FormikActions<ILoginValues>,
+  setIsLoggingIn: (isLoggingIn: boolean) => void
+): Promise<void> => {
+  if (!emailValidation(values.userName)) {
+    setFieldError("userName", "Invalid email");
+    return;
+  }
+  setIsLoggingIn(true);
+};
+
 const Login: FC<{}> = (): JSX.Element => {
   const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
-  const [submitDisabled, setSubmitDisabled] = useState<boolean>(true);
-  const [username, setUsername] = useState<string | null>(null);
-  const [password, setPassword] = useState<string | null>(null);
-
-  useEffect((): void => {
-    if (username && password) {
-      setSubmitDisabled(false);
-    } else {
-      setSubmitDisabled(true);
-    }
-  }, [username, password]);
 
   return (
     <>
       <Spinner
         visible={isLoggingIn}
         textContent={"Loading..."}
-        textStyle={styles.spinnerTextStyle}
+        textStyle={colors.spinnerTextStyle}
       />
       <Logo />
-      <View style={styles.container}>
-        <TextInput
-          style={styles.inputBox}
-          onChangeText={text => setUsername(text)}
-          placeholder="Username"
-          placeholderTextColor={colors.login.placeholderTextColor}
-        />
-        <TextInput
-          secureTextEntry
-          style={styles.inputBox}
-          onChangeText={text => setPassword(text)}
-          placeholder="Password"
-          placeholderTextColor={colors.login.placeholderTextColor}
-        />
-        <TouchableOpacity
-          style={styles.loginButton}
-          disabled={submitDisabled}
-          onPress={(): void => {
-            setIsLoggingIn(true);
-          }}
-        >
-          <Text style={styles.loginButtonText}>Login</Text>
-        </TouchableOpacity>
-      </View>
+      <Formik
+        initialValues={{
+          userName: null,
+          password: null
+        }}
+        onSubmit={async (
+          values: ILoginValues,
+          props: FormikActions<ILoginValues>
+        ) => {
+          await handleSubmit(values, props, setIsLoggingIn);
+        }}
+      >
+        {(props: FormikProps<ILoginValues>): JSX.Element => (
+          <>
+            <View style={styles.container}>
+              <View style={styles.containerInput}>
+                <TextInput
+                  style={styles.inputBox}
+                  onChangeText={props.handleChange("userName")}
+                  onBlur={props.handleBlur("userName")}
+                  placeholder="Username"
+                  placeholderTextColor={colors.login.placeholderTextColor}
+                  value={props.values.userName}
+                />
+              </View>
+              <View style={styles.containerInput}>
+                <ErrorMessage component={LoginError} name="userName" />
+                <TextInput
+                  secureTextEntry
+                  style={styles.inputBox}
+                  onChangeText={props.handleChange("password")}
+                  onBlur={props.handleBlur("password")}
+                  placeholder="Password"
+                  placeholderTextColor={colors.login.placeholderTextColor}
+                  value={props.values.password}
+                />
+              </View>
+              <View>
+                <TouchableOpacity
+                  style={styles.loginButton}
+                  disabled={!props.values.userName || !props.values.password}
+                  onPress={(): void => {
+                    props.handleSubmit();
+                  }}
+                >
+                  <Text style={styles.loginButtonText}>Login</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </>
+        )}
+      </Formik>
+
       <View style={styles.signupTextContainer}>
-        <Text style={styles.signupText}>
+        <Text style={colors.signupText}>
           Don't have an account yet?{" "}
           <Text
             style={styles.signupLink}
@@ -77,9 +120,17 @@ const Login: FC<{}> = (): JSX.Element => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     alignItems: "center",
+    flex: 1,
     justifyContent: "center"
+  },
+  containerInput: {
+    alignItems: "center",
+    backgroundColor: colors.login.inputBox.backgroundColor,
+    borderRadius: 25,
+    height: 40,
+    justifyContent: "center",
+    marginVertical: 8
   },
   loginButton: {
     backgroundColor: colors.login.buttonBackgroundColor,
@@ -95,29 +146,27 @@ const styles = StyleSheet.create({
     textAlign: "center"
   },
   inputBox: {
+    borderBottomWidth: 0,
     borderColor: colors.login.inputBox.borderColor,
-    borderRadius: 25,
-    backgroundColor: colors.login.inputBox.backgroundColor,
-    height: 40,
-    marginVertical: 8,
+    borderWidth: 1,
+    color: colors.white,
+    elevation: 1,
+    fontWeight: "bold",
     paddingHorizontal: 16,
+    shadowColor: colors.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
     width: 300
-  },
-  signupText: {
-    color: "rgba(255, 255, 255, 0.7)"
   },
   signupTextContainer: {
     alignItems: "center",
-    color: "rgba(255, 255, 255, 0.7)",
     justifyContent: "center",
     flexGrow: 1,
     bottom: 10
   },
   signupLink: {
     textDecorationLine: "underline"
-  },
-  spinnerTextStyle: {
-    color: "#FFF"
   }
 });
 
